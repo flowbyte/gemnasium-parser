@@ -82,7 +82,7 @@ describe Gemnasium::Parser::Gemspec do
       end
     EOF
     dependency.name.should == "rake"
-    dependency.requirement.as_list.should == ["<= 0.9.2", ">= 0.8.7"]
+    dependency.requirement.as_list.should == [">= 0.8.7", "<= 0.9.2"]
   end
 
   it "parses single-element array requirement gems" do
@@ -102,7 +102,7 @@ describe Gemnasium::Parser::Gemspec do
       end
     EOF
     dependency.name.should == "rake"
-    dependency.requirement.as_list.should == ["<= 0.9.2", ">= 0.8.7"]
+    dependency.requirement.as_list.should == [">= 0.8.7", "<= 0.9.2"]
   end
 
   it "parses runtime gems" do

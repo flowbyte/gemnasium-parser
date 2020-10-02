@@ -58,7 +58,7 @@ describe Gemnasium::Parser::Gemfile do
   it "parses multi-requirement gems" do
     content(%(gem "rake", ">= 0.8.7", "<= 0.9.2"))
     dependency.name.should == "rake"
-    dependency.requirement.as_list.should == ["<= 0.9.2", ">= 0.8.7"]
+    dependency.requirement.as_list.should == [">= 0.8.7", "<= 0.9.2"]
   end
 
   it "parses gems with options" do
