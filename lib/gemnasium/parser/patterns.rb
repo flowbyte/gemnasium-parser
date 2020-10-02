@@ -31,6 +31,8 @@ module Gemnasium
 
       PATH_CALL = /^(?<i1>[ \t]*)path[ \(][^\n]*?do[ \t]*?\n(?<blk>.*?)\n^\k<i1>end[ \t]*$/m
 
+      SOURCE_CALL = /^(?<i1>[ \t]*)source\(?[ \t]*(?<src>#{STRING})[ \t]*\)?[ \t]+do[ \t]*?\n(?<blk>.*?)\n^\k<i1>end[ \t]*$/m
+
       GEMSPEC_CALL = /^[ \t]*gemspec(?:\(?[ \t]*(?<opts>#{OPTIONS}))?[ \t]*\)?[ \t]*$/
 
       ADD_DEPENDENCY_CALL = /^[ \t]*\w+\.add(?<type>_runtime|_development)?_dependency\(?[ \t]*#{QUOTED_GEM_NAME}(?:[ \t]*,[ \t]*#{REQUIREMENTS})?[ \t]*\)?[ \t]*#{COMMENT}$/

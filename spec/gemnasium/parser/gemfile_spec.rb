@@ -178,6 +178,59 @@ describe Gemnasium::Parser::Gemfile do
     dependencies[1].groups.should == [:development, :test]
   end
 
+  it "parses inline source" do
+    @content = <<~END
+      gem "rake"
+      gem 'private-pkg', source: 'https://gems.example.com/'
+    END
+
+    dependencies[0].source.should be_nil
+    dependencies[1].source.should == 'https://gems.example.com/'
+  end
+
+  it "parses block source" do
+    @content = <<~END
+      gem 'rake'
+
+      source 'https://gems.example.com/' do
+        gem 'private-pkg'
+      end
+
+      gem 'sqlite3'
+
+      source 'https://rubygems.pkg.github.com/example/' do
+        gem 'another-pkg'
+      end
+    END
+
+    dependencies[0].source.should be_nil
+    dependencies[1].source.should == 'https://gems.example.com/'
+    dependencies[2].source.should be_nil
+    dependencies[3].source.should == 'https://rubygems.pkg.github.com/example/'
+  end
+
+  it "parses block source and inline source" do
+    @content = <<~END
+      source 'https://gems.example.com/' do
+        gem 'private-pkg'
+        gem 'another-pkg', source: 'https://rubygems.pkg.github.com/example/'
+      end
+    END
+
+    dependencies[0].source.should == 'https://gems.example.com/'
+    dependencies[1].source.should == 'https://rubygems.pkg.github.com/example/'
+  end
+
+  it "parses block source with parentheses" do
+    @content = <<~END
+      source("https://gems.example.com/") do
+        gem 'private-pkg'
+      end
+    END
+
+    dependencies[0].source.should == 'https://gems.example.com/'
+  end
+
   it "ignores h4x" do
     path = File.expand_path("../h4x.txt", __FILE__)
     content(%(gem "h4x", :require => "\#{`touch #{path}`}"))

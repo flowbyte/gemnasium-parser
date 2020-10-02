@@ -97,10 +97,23 @@ module Gemnasium
           @path_matches ||= matches(Patterns::PATH_CALL)
         end
 
+        def source(match)
+          src = source_matches.detect{|m| in_block?(match, m) }
+          src && Patterns.value(src[:src])
+        end
+
+        def source_matches
+          @source_matches ||= matches(Patterns::SOURCE_CALL)
+        end
+
         def clean!(match, opts)
           opts["group"] ||= opts.delete("groups")
           opts["group"] ||= groups(match)
           groups = Array(opts["group"]).flatten.compact
+
+          opts["source"] ||= opts.delete("source")
+          opts["source"] ||= source(match)
+
           runtime = groups.empty? || !(groups & Parser.runtime_groups).empty?
           opts["type"] ||= runtime ? :runtime : :development
         end
