@@ -20,9 +20,8 @@ module Gemnasium
       VALUE = /(?:#{BOOLEAN}|#{NIL}|#{ELEMENT}|#{ARRAY}|)/
       PAIR = /(?:(#{KEY})[ \t]*=>[ \t]*(#{VALUE})|(\w+):[ \t]+(#{VALUE}))/
       OPTIONS = /#{PAIR}(?:[ \t]*,[ \t]*#{PAIR})*/
-      COMMENT = /(#[^\n]*)?/
 
-      GEM_CALL = /^[ \t]*gem\(?[ \t]*#{QUOTED_GEM_NAME}(?:[ \t]*,[ \t]*#{REQUIREMENT_LIST})?(?:[ \t]*,[ \t]*(?<opts>#{OPTIONS}))?[ \t]*\)?[ \t]*#{COMMENT}$/
+      GEM_CALL = /^[ \t]*gem\(?[ \t]*(?<qname>#{QUOTED_GEM_NAME})(?:[ \t]*,[ \t]*(?<reqall>(?<rso>\[)?[ \t]*#{REQUIREMENT_LIST}(?<rsc>\])?))?(?:[ \t]*,[ \t]*(?<opts>#{OPTIONS}))?.*$/
 
       SYMBOLS = /#{SYMBOL}([ \t]*,[ \t]*#{SYMBOL})*/
       GROUP_CALL = /^(?<i1>[ \t]*)group\(?[ \t]*(?<grps>#{SYMBOLS})[ \t]*\)?[ \t]+do[ \t]*?\n(?<blk>.*?)\n^\k<i1>end[ \t]*$/m
@@ -37,7 +36,7 @@ module Gemnasium
 
       GEMSPEC_CALL = /^[ \t]*gemspec(?:\(?[ \t]*(?<opts>#{OPTIONS}))?[ \t]*\)?[ \t]*$/
 
-      ADD_DEPENDENCY_CALL = /^[ \t]*\w+\.add(?<type>_runtime|_development)?_dependency\(?[ \t]*#{QUOTED_GEM_NAME}(?:[ \t]*,[ \t]*#{REQUIREMENTS})?[ \t]*\)?[ \t]*#{COMMENT}$/
+      ADD_DEPENDENCY_CALL = /^[ \t]*\w+\.add(?<type>_runtime|_development)?_dependency\(?[ \t]*(?<qname>#{QUOTED_GEM_NAME})(?:[ \t]*,[ \t]*(?<reqall>(?<rso>\[)?[ \t]*#{REQUIREMENT_LIST}(?<rsc>\])?))?.*$/
 
       def self.options(string)
         {}.tap do |hash|

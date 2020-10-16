@@ -305,10 +305,18 @@ describe Gemnasium::Parser::Gemfile do
     gemfile.sources.should == ['https://rubygems.org', 'https://gems.example.com/']
   end
 
+  it "parses weird options" do
+    @content = <<~END
+      gem 'afm', '~> 0.1.0', :env => ENV['RAILS_ENV']
+    END
+
+    dependency.name.should == "afm"
+  end
+
   it "ignores h4x" do
     path = File.expand_path("../h4x.txt", __FILE__)
     content(%(gem "h4x", :require => "\#{`touch #{path}`}"))
-    dependencies.size.should == 0
+    dependencies.size.should == 1
     begin
       File.should_not exist(path)
     ensure
