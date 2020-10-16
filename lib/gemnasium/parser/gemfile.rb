@@ -32,6 +32,10 @@ module Gemnasium
         !!gemspec
       end
 
+      def sources
+        @sources ||= source_matches.map { |m| Patterns.value(m[:src]) }.uniq
+      end
+
       private
         def gem_matches
           @gem_matches ||= matches(Patterns::GEM_CALL)
@@ -97,13 +101,17 @@ module Gemnasium
           @path_matches ||= matches(Patterns::PATH_CALL)
         end
 
+        def source_matches
+          @source_matches ||= matches(Patterns::SOURCE_CALL)
+        end
+
         def source(match)
-          src = source_matches.detect{|m| in_block?(match, m) }
+          src = source_block_matches.detect{|m| in_block?(match, m) }
           src && Patterns.value(src[:src])
         end
 
-        def source_matches
-          @source_matches ||= matches(Patterns::SOURCE_CALL)
+        def source_block_matches
+          @source_block_matches ||= matches(Patterns::SOURCE_BLOCK_CALL)
         end
 
         def clean!(match, opts)

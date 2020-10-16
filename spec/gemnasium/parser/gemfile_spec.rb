@@ -231,6 +231,80 @@ describe Gemnasium::Parser::Gemfile do
     dependencies[0].source.should == 'https://gems.example.com/'
   end
 
+  it "parses sources with single top-level source" do
+    @content = <<~END
+      source 'https://rubygems.org'
+      gem 'rake'
+    END
+
+    gemfile.sources.should == ['https://rubygems.org']
+  end
+
+  it "parses sources with multiple top-level sources" do
+    @content = <<~END
+      source 'https://rubygems.org'
+      source    "https://gems.example.com/"
+
+      gem 'source'
+    END
+
+    gemfile.sources.should == ['https://rubygems.org', 'https://gems.example.com/']
+  end
+
+  it "parses sources should ignore inline sources" do
+    @content = <<~END
+      source 'https://rubygems.org'
+
+      gem 'rake'
+      gem 'private-pkg1', source: 'https://gems.example.com/'
+      gem 'private-pkg2', source => 'https://gems.example.com/'
+    END
+
+    gemfile.sources.should == ['https://rubygems.org']
+  end
+
+  it "parses sources with no source" do
+    @content = <<~END
+      gem 'rake'
+    END
+
+    gemfile.sources.should == []
+  end
+
+  it "parses sources with multiple" do
+    @content = <<~END
+      source 'https://rubygems.org'
+
+      source 'https://gems.example.com/' do
+        gem 'private-pkg'
+      end
+
+      gem 'sqlite3'
+
+      source("https://rubygems.pkg.github.com/example/") do
+        gem 'another-pkg'
+      end
+    END
+
+    gemfile.sources.should == ['https://rubygems.org', 'https://gems.example.com/', 'https://rubygems.pkg.github.com/example/']
+  end
+
+  it "parses sources with duplicates" do
+    @content = <<~END
+      source 'https://rubygems.org'
+
+      source 'https://gems.example.com/' do
+        gem 'private-pkg'
+      end
+
+      source "https://rubygems.org" do
+        gem 'another-pkg'
+      end
+    END
+
+    gemfile.sources.should == ['https://rubygems.org', 'https://gems.example.com/']
+  end
+
   it "ignores h4x" do
     path = File.expand_path("../h4x.txt", __FILE__)
     content(%(gem "h4x", :require => "\#{`touch #{path}`}"))

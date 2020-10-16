@@ -31,7 +31,9 @@ module Gemnasium
 
       PATH_CALL = /^(?<i1>[ \t]*)path[ \(][^\n]*?do[ \t]*?\n(?<blk>.*?)\n^\k<i1>end[ \t]*$/m
 
-      SOURCE_CALL = /^(?<i1>[ \t]*)source\(?[ \t]*(?<src>#{STRING})[ \t]*\)?[ \t]+do[ \t]*?\n(?<blk>.*?)\n^\k<i1>end[ \t]*$/m
+      SOURCE_BLOCK_CALL = /^(?<i1>[ \t]*)source\(?[ \t]*(?<src>#{STRING})[ \t]*\)?[ \t]+do[ \t]*?\n(?<blk>.*?)\n^\k<i1>end[ \t]*$/m
+
+      SOURCE_CALL = /^[ \t]*source\(?[ \t]*(?<src>#{STRING})[ \t]*\)?/
 
       GEMSPEC_CALL = /^[ \t]*gemspec(?:\(?[ \t]*(?<opts>#{OPTIONS}))?[ \t]*\)?[ \t]*$/
 
