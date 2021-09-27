@@ -33,7 +33,7 @@ module Gemnasium
       end
 
       def sources
-        @sources ||= source_matches.map { |m| Patterns.value(m[:src]) }.uniq
+        @sources ||= source_matches.map { |m| Patterns.string_value(m[:src]) }.uniq
       end
 
       private
@@ -107,7 +107,7 @@ module Gemnasium
 
         def source(match)
           src = source_block_matches.detect{|m| in_block?(match, m) }
-          src && Patterns.value(src[:src])
+          src && Patterns.string_value(src[:src])
         end
 
         def source_block_matches

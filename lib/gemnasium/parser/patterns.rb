@@ -60,6 +60,10 @@ module Gemnasium
         end
       end
 
+      def self.string_value(string)
+        string.tr(%("'), "")
+      end
+
       def self.values(string)
         string.strip.split(/[ \t]*,[ \t]*/).map{|v| value(v) }
       end

@@ -231,6 +231,16 @@ describe Gemnasium::Parser::Gemfile do
     dependencies[0].source.should == 'https://gems.example.com/'
   end
 
+  it "parses block source with username password" do
+    @content = <<~END
+      source "https://user:pwd@gems.example.com/" do
+        gem 'private-pkg'
+      end
+    END
+
+    dependencies[0].source.should == 'https://user:pwd@gems.example.com/'
+  end
+
   it "parses sources with single top-level source" do
     @content = <<~END
       source 'https://rubygems.org'
@@ -275,7 +285,7 @@ describe Gemnasium::Parser::Gemfile do
     @content = <<~END
       source 'https://rubygems.org'
 
-      source 'https://gems.example.com/' do
+      source 'https://user:pwd@gems.example.com/' do
         gem 'private-pkg'
       end
 
@@ -286,7 +296,7 @@ describe Gemnasium::Parser::Gemfile do
       end
     END
 
-    gemfile.sources.should == ['https://rubygems.org', 'https://gems.example.com/', 'https://rubygems.pkg.github.com/example/']
+    gemfile.sources.should == ['https://rubygems.org', 'https://user:pwd@gems.example.com/', 'https://rubygems.pkg.github.com/example/']
   end
 
   it "parses sources with duplicates" do
