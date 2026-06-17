@@ -36,6 +36,10 @@ module Gemnasium
         @sources ||= source_matches.map { |m| Patterns.string_value(m[:src]) }.uniq
       end
 
+      def sources_with_options
+        @sources_with_options ||= source_matches.map { |m| [Patterns.string_value(m[:src]), Patterns.options(m[:opts])] }.uniq
+      end
+
       private
         def gem_matches
           @gem_matches ||= matches(Patterns::GEM_CALL)

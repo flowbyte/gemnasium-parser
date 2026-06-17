@@ -259,6 +259,7 @@ describe Gemnasium::Parser::Gemfile do
     END
 
     expect(gemfile.sources).to eq(['https://rubygems.org', 'https://gems.example.com/'])
+    expect(gemfile.sources_with_options).to eq([['https://rubygems.org', {}], ['https://gems.example.com/', {}]])
   end
 
   it "parses sources should ignore inline sources" do
@@ -271,6 +272,7 @@ describe Gemnasium::Parser::Gemfile do
     END
 
     expect(gemfile.sources).to eq(['https://rubygems.org'])
+    expect(gemfile.sources_with_options).to eq([['https://rubygems.org', {}]])
   end
 
   it "parses sources with no source" do
@@ -313,6 +315,26 @@ describe Gemnasium::Parser::Gemfile do
     END
 
     expect(gemfile.sources).to eq(['https://rubygems.org', 'https://gems.example.com/'])
+    expect(gemfile.sources_with_options).to eq([['https://rubygems.org', {}], ['https://gems.example.com/', {}]])
+  end
+
+  it "parses source with options" do
+    @content = <<~END
+      source 'https://rubygems.org', :cooldown => 7
+      source 'https://fresh.rubygems.org', cooldown: 0
+
+      source 'https://gems.coop', :cooldown   =>  "4"
+      source("https://gems.example.com/",     cooldown:    3) do
+        gem 'private-pkg'
+      end
+    END
+
+    expect(gemfile.sources_with_options).to eq([
+      ["https://rubygems.org", {"cooldown" => 7}],
+      ["https://fresh.rubygems.org", {"cooldown" => 0}],
+      ["https://gems.coop", {"cooldown" => "4"}],
+      ["https://gems.example.com/", {"cooldown" => 3}]
+    ])
   end
 
   it "parses weird options" do

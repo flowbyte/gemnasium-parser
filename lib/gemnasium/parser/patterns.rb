@@ -15,9 +15,10 @@ module Gemnasium
       STRING = /(?:"[^"#]*"|'[^']*')/
       BOOLEAN = /(?:true|false)/
       NIL = /nil/
+      INTEGER = /\d+/
       ELEMENT = /(?:#{SYMBOL}|#{STRING})/
       ARRAY = /\[(?:#{ELEMENT}(?:[ \t]*,[ \t]*#{ELEMENT})*)?\]/
-      VALUE = /(?:#{BOOLEAN}|#{NIL}|#{ELEMENT}|#{ARRAY}|)/
+      VALUE = /(?:#{BOOLEAN}|#{NIL}|#{INTEGER}|#{ELEMENT}|#{ARRAY}|)/
       PAIR = /(?:(#{KEY})[ \t]*=>[ \t]*(#{VALUE})|(\w+):[ \t]+(#{VALUE}))/
       OPTIONS = /#{PAIR}(?:[ \t]*,[ \t]*#{PAIR})*/
 
@@ -32,7 +33,7 @@ module Gemnasium
 
       SOURCE_BLOCK_CALL = /^(?<i1>[ \t]*)source\(?[ \t]*(?<src>#{STRING})[ \t]*\)?[ \t]+do[ \t]*?\n(?<blk>.*?)\n^\k<i1>end[ \t]*$/m
 
-      SOURCE_CALL = /^[ \t]*source\(?[ \t]*(?<src>#{STRING})[ \t]*\)?/
+      SOURCE_CALL = /^[ \t]*source\(?[ \t]*(?<src>#{STRING})(?:[ \t]*,[ \t]*(?<opts>#{OPTIONS}))?[ \t]*\)?/
 
       GEMSPEC_CALL = /^[ \t]*gemspec(?:\(?[ \t]*(?<opts>#{OPTIONS}))?[ \t]*\)?[ \t]*$/
 
@@ -56,6 +57,7 @@ module Gemnasium
         when SYMBOL then string.tr(%(:"'), "").to_sym
         when STRING then string.tr(%("'), "")
         when BOOLEAN then string == "true"
+        when INTEGER then string.to_i
         when NIL then nil
         end
       end
