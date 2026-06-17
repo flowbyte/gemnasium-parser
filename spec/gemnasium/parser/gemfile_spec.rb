@@ -18,7 +18,7 @@ describe Gemnasium::Parser::Gemfile do
   end
 
   def dependency
-    dependencies.size.should == 1
+    expect(dependencies.size).to eq(1)
     dependencies.first
   end
 
@@ -28,99 +28,99 @@ describe Gemnasium::Parser::Gemfile do
 
   it "parses double quotes" do
     content(%(gem "rake", ">= 0.8.7"))
-    dependency.name.should == "rake"
-    dependency.requirement.as_list.should == [">= 0.8.7"]
+    expect(dependency.name).to eq("rake")
+    expect(dependency.requirement.as_list).to eq([">= 0.8.7"])
   end
 
   it "parses single quotes" do
     content(%(gem 'rake', '>= 0.8.7'))
-    dependency.name.should == "rake"
-    dependency.requirement.as_list.should == [">= 0.8.7"]
+    expect(dependency.name).to eq("rake")
+    expect(dependency.requirement.as_list).to eq([">= 0.8.7"])
   end
 
   it "ignores mixed quotes" do
     content(%(gem "rake', ">= 0.8.7"))
-    dependencies.size.should == 0
+    expect(dependencies.size).to eq(0)
   end
 
   it "parses gems with a period in the name" do
     content(%(gem "pygment.rb", ">= 0.8.7"))
-    dependency.name.should == "pygment.rb"
-    dependency.requirement.as_list.should == [">= 0.8.7"]
+    expect(dependency.name).to eq("pygment.rb")
+    expect(dependency.requirement.as_list).to eq([">= 0.8.7"])
   end
 
   it "parses non-requirement gems" do
     content(%(gem "rake"))
-    dependency.name.should == "rake"
-    dependency.requirement.as_list.should == [">= 0"]
+    expect(dependency.name).to eq("rake")
+    expect(dependency.requirement.as_list).to eq([">= 0"])
   end
 
   it "parses multi-requirement gems" do
     content(%(gem "rake", ">= 0.8.7", "<= 0.9.2"))
-    dependency.name.should == "rake"
-    dependency.requirement.as_list.should == [">= 0.8.7", "<= 0.9.2"]
+    expect(dependency.name).to eq("rake")
+    expect(dependency.requirement.as_list).to eq([">= 0.8.7", "<= 0.9.2"])
   end
 
   it "parses gems with options" do
     content(%(gem "rake", ">= 0.8.7", :require => false))
-    dependency.name.should == "rake"
-    dependency.requirement.as_list.should == [">= 0.8.7"]
+    expect(dependency.name).to eq("rake")
+    expect(dependency.requirement.as_list).to eq([">= 0.8.7"])
   end
 
   it "listens for gemspecs" do
     content(%(gemspec))
-    gemfile.should be_gemspec
-    gemfile.gemspec.should == "*.gemspec"
+    expect(gemfile).to be_gemspec
+    expect(gemfile.gemspec).to eq("*.gemspec")
     reset
     content(%(gem "rake"))
-    gemfile.should_not be_gemspec
-    gemfile.gemspec.should be_nil
+    expect(gemfile).not_to be_gemspec
+    expect(gemfile.gemspec).to be_nil
   end
 
   it "parses gemspecs with a name option" do
     content(%(gemspec :name => "gemnasium-parser"))
-    gemfile.gemspec.should == "gemnasium-parser.gemspec"
+    expect(gemfile.gemspec).to eq("gemnasium-parser.gemspec")
   end
 
   it "parses gemspecs with a path option" do
     content(%(gemspec :path => "lib/gemnasium"))
-    gemfile.gemspec.should == "lib/gemnasium/*.gemspec"
+    expect(gemfile.gemspec).to eq("lib/gemnasium/*.gemspec")
   end
 
   it "parses gemspecs with name and path options" do
     content(%(gemspec :name => "parser", :path => "lib/gemnasium"))
-    gemfile.gemspec.should == "lib/gemnasium/parser.gemspec"
+    expect(gemfile.gemspec).to eq("lib/gemnasium/parser.gemspec")
   end
 
   it "parses gemspecs with parentheses" do
     content(%(gemspec(:name => "gemnasium-parser")))
-    gemfile.should be_gemspec
+    expect(gemfile).to be_gemspec
   end
 
   it "parses gems of a type" do
     content(%(gem "rake"))
-    dependency.type.should == :runtime
+    expect(dependency.type).to eq(:runtime)
     reset
     content(%(gem "rake", :type => :development))
-    dependency.type.should == :development
+    expect(dependency.type).to eq(:development)
   end
 
   it "parses gems of a group" do
     content(%(gem "rake"))
-    dependency.groups.should == [:default]
+    expect(dependency.groups).to eq([:default])
     reset
     content(%(gem "rake", :group => :development))
-    dependency.groups.should == [:development]
+    expect(dependency.groups).to eq([:development])
   end
 
   it "parses gems of multiple groups" do
     content(%(gem "rake", :group => [:development, :test]))
-    dependency.groups.should == [:development, :test]
+    expect(dependency.groups).to eq([:development, :test])
   end
 
   it "recognizes :groups" do
     content(%(gem "rake", :groups => [:development, :test]))
-    dependency.groups.should == [:development, :test]
+    expect(dependency.groups).to eq([:development, :test])
   end
 
   it "parses gems in a group" do
@@ -133,9 +133,9 @@ describe Gemnasium::Parser::Gemfile do
         gem "sqlite3"
       end
     EOF
-    dependencies[0].groups.should == [:default]
-    dependencies[1].groups.should == [:production]
-    dependencies[2].groups.should == [:development]
+    expect(dependencies[0].groups).to eq([:default])
+    expect(dependencies[1].groups).to eq([:production])
+    expect(dependencies[2].groups).to eq([:development])
   end
 
   it "parses gems in a group with parentheses" do
@@ -144,7 +144,7 @@ describe Gemnasium::Parser::Gemfile do
         gem "pg"
       end
     EOF
-    dependency.groups.should == [:production]
+    expect(dependency.groups).to eq([:production])
   end
 
   it "parses gems in multiple groups" do
@@ -153,7 +153,7 @@ describe Gemnasium::Parser::Gemfile do
         gem "sqlite3"
       end
     EOF
-    dependency.groups.should == [:development, :test]
+    expect(dependency.groups).to eq([:development, :test])
   end
 
   it "parses multiple gems in a group" do
@@ -163,8 +163,8 @@ describe Gemnasium::Parser::Gemfile do
         gem "sqlite3"
       end
     EOF
-    dependencies[0].groups.should == [:development]
-    dependencies[1].groups.should == [:development]
+    expect(dependencies[0].groups).to eq([:development])
+    expect(dependencies[1].groups).to eq([:development])
   end
 
   it "parses multiple gems in multiple groups" do
@@ -174,8 +174,8 @@ describe Gemnasium::Parser::Gemfile do
         gem "sqlite3"
       end
     EOF
-    dependencies[0].groups.should == [:development, :test]
-    dependencies[1].groups.should == [:development, :test]
+    expect(dependencies[0].groups).to eq([:development, :test])
+    expect(dependencies[1].groups).to eq([:development, :test])
   end
 
   it "parses inline source" do
@@ -184,8 +184,8 @@ describe Gemnasium::Parser::Gemfile do
       gem 'private-pkg', source: 'https://gems.example.com/'
     END
 
-    dependencies[0].source.should be_nil
-    dependencies[1].source.should == 'https://gems.example.com/'
+    expect(dependencies[0].source).to be_nil
+    expect(dependencies[1].source).to eq('https://gems.example.com/')
   end
 
   it "parses block source" do
@@ -203,10 +203,10 @@ describe Gemnasium::Parser::Gemfile do
       end
     END
 
-    dependencies[0].source.should be_nil
-    dependencies[1].source.should == 'https://gems.example.com/'
-    dependencies[2].source.should be_nil
-    dependencies[3].source.should == 'https://rubygems.pkg.github.com/example/'
+    expect(dependencies[0].source).to be_nil
+    expect(dependencies[1].source).to eq('https://gems.example.com/')
+    expect(dependencies[2].source).to be_nil
+    expect(dependencies[3].source).to eq('https://rubygems.pkg.github.com/example/')
   end
 
   it "parses block source and inline source" do
@@ -217,8 +217,8 @@ describe Gemnasium::Parser::Gemfile do
       end
     END
 
-    dependencies[0].source.should == 'https://gems.example.com/'
-    dependencies[1].source.should == 'https://rubygems.pkg.github.com/example/'
+    expect(dependencies[0].source).to eq('https://gems.example.com/')
+    expect(dependencies[1].source).to eq('https://rubygems.pkg.github.com/example/')
   end
 
   it "parses block source with parentheses" do
@@ -228,7 +228,7 @@ describe Gemnasium::Parser::Gemfile do
       end
     END
 
-    dependencies[0].source.should == 'https://gems.example.com/'
+    expect(dependencies[0].source).to eq('https://gems.example.com/')
   end
 
   it "parses block source with username password" do
@@ -238,7 +238,7 @@ describe Gemnasium::Parser::Gemfile do
       end
     END
 
-    dependencies[0].source.should == 'https://user:pwd@gems.example.com/'
+    expect(dependencies[0].source).to eq('https://user:pwd@gems.example.com/')
   end
 
   it "parses sources with single top-level source" do
@@ -247,7 +247,7 @@ describe Gemnasium::Parser::Gemfile do
       gem 'rake'
     END
 
-    gemfile.sources.should == ['https://rubygems.org']
+    expect(gemfile.sources).to eq(['https://rubygems.org'])
   end
 
   it "parses sources with multiple top-level sources" do
@@ -258,7 +258,7 @@ describe Gemnasium::Parser::Gemfile do
       gem 'source'
     END
 
-    gemfile.sources.should == ['https://rubygems.org', 'https://gems.example.com/']
+    expect(gemfile.sources).to eq(['https://rubygems.org', 'https://gems.example.com/'])
   end
 
   it "parses sources should ignore inline sources" do
@@ -270,7 +270,7 @@ describe Gemnasium::Parser::Gemfile do
       gem 'private-pkg2', source => 'https://gems.example.com/'
     END
 
-    gemfile.sources.should == ['https://rubygems.org']
+    expect(gemfile.sources).to eq(['https://rubygems.org'])
   end
 
   it "parses sources with no source" do
@@ -278,7 +278,7 @@ describe Gemnasium::Parser::Gemfile do
       gem 'rake'
     END
 
-    gemfile.sources.should == []
+    expect(gemfile.sources).to eq([])
   end
 
   it "parses sources with multiple" do
@@ -296,7 +296,7 @@ describe Gemnasium::Parser::Gemfile do
       end
     END
 
-    gemfile.sources.should == ['https://rubygems.org', 'https://user:pwd@gems.example.com/', 'https://rubygems.pkg.github.com/example/']
+    expect(gemfile.sources).to eq(['https://rubygems.org', 'https://user:pwd@gems.example.com/', 'https://rubygems.pkg.github.com/example/'])
   end
 
   it "parses sources with duplicates" do
@@ -312,7 +312,7 @@ describe Gemnasium::Parser::Gemfile do
       end
     END
 
-    gemfile.sources.should == ['https://rubygems.org', 'https://gems.example.com/']
+    expect(gemfile.sources).to eq(['https://rubygems.org', 'https://gems.example.com/'])
   end
 
   it "parses weird options" do
@@ -320,15 +320,15 @@ describe Gemnasium::Parser::Gemfile do
       gem 'afm', '~> 0.1.0', :env => ENV['RAILS_ENV']
     END
 
-    dependency.name.should == "afm"
+    expect(dependency.name).to eq("afm")
   end
 
   it "ignores h4x" do
     path = File.expand_path("../h4x.txt", __FILE__)
     content(%(gem "h4x", :require => "\#{`touch #{path}`}"))
-    dependencies.size.should == 1
+    expect(dependencies.size).to eq(1)
     begin
-      File.should_not exist(path)
+      expect(File).not_to exist(path)
     ensure
       FileUtils.rm_f(path)
     end
@@ -336,17 +336,17 @@ describe Gemnasium::Parser::Gemfile do
 
   it "ignores gems with a git option" do
     content(%(gem "rails", :git => "https://github.com/rails/rails.git"))
-    dependencies.size.should == 0
+    expect(dependencies.size).to eq(0)
   end
 
   it "ignores gems with a github option" do
     content(%(gem "rails", :github => "rails/rails"))
-    dependencies.size.should == 0
+    expect(dependencies.size).to eq(0)
   end
 
   it "ignores gems with a path option" do
     content(%(gem "rails", :path => "vendor/rails"))
-    dependencies.size.should == 0
+    expect(dependencies.size).to eq(0)
   end
 
   it "ignores gems in a git block" do
@@ -355,7 +355,7 @@ describe Gemnasium::Parser::Gemfile do
         gem "rails"
       end
     EOF
-    dependencies.size.should == 0
+    expect(dependencies.size).to eq(0)
   end
 
   it "ignores gems in a git block with parentheses" do
@@ -364,7 +364,7 @@ describe Gemnasium::Parser::Gemfile do
         gem "rails"
       end
     EOF
-    dependencies.size.should == 0
+    expect(dependencies.size).to eq(0)
   end
 
   it "ignores gems in a path block" do
@@ -373,7 +373,7 @@ describe Gemnasium::Parser::Gemfile do
         gem "rails"
       end
     EOF
-    dependencies.size.should == 0
+    expect(dependencies.size).to eq(0)
   end
 
   it "ignores gems in a path block with parentheses" do
@@ -382,7 +382,7 @@ describe Gemnasium::Parser::Gemfile do
         gem "rails"
       end
     EOF
-    dependencies.size.should == 0
+    expect(dependencies.size).to eq(0)
   end
 
   it "records dependency line numbers" do
@@ -391,8 +391,8 @@ describe Gemnasium::Parser::Gemfile do
 
       gem "rails"
     EOF
-    dependencies[0].instance_variable_get(:@line).should == 1
-    dependencies[1].instance_variable_get(:@line).should == 3
+    expect(dependencies[0].instance_variable_get(:@line)).to eq(1)
+    expect(dependencies[1].instance_variable_get(:@line)).to eq(3)
   end
 
   it "maps groups to types" do
@@ -402,10 +402,10 @@ describe Gemnasium::Parser::Gemfile do
       gem "mysql2", :group => :staging
       gem "sqlite3", :group => :development
     EOF
-    dependencies[0].type.should == :runtime
-    dependencies[1].type.should == :runtime
-    dependencies[2].type.should == :development
-    dependencies[3].type.should == :development
+    expect(dependencies[0].type).to eq(:runtime)
+    expect(dependencies[1].type).to eq(:runtime)
+    expect(dependencies[2].type).to eq(:development)
+    expect(dependencies[3].type).to eq(:development)
     reset
     Gemnasium::Parser.runtime_groups << :staging
     content(<<-EOF)
@@ -414,26 +414,26 @@ describe Gemnasium::Parser::Gemfile do
       gem "mysql2", :group => :staging
       gem "sqlite3", :group => :development
     EOF
-    dependencies[0].type.should == :runtime
-    dependencies[1].type.should == :runtime
-    dependencies[2].type.should == :runtime
-    dependencies[3].type.should == :development
+    expect(dependencies[0].type).to eq(:runtime)
+    expect(dependencies[1].type).to eq(:runtime)
+    expect(dependencies[2].type).to eq(:runtime)
+    expect(dependencies[3].type).to eq(:development)
   end
 
   it "parses parentheses" do
     content(%(gem("rake", ">= 0.8.7")))
-    dependency.name.should == "rake"
-    dependency.requirement.as_list.should == [">= 0.8.7"]
+    expect(dependency.name).to eq("rake")
+    expect(dependency.requirement.as_list).to eq([">= 0.8.7"])
   end
 
   it "parses gems followed by inline comments" do
     content(%(gem "rake", ">= 0.8.7" # Comment))
-    dependency.name.should == "rake"
-    dependency.requirement.as_list.should == [">= 0.8.7"]
+    expect(dependency.name).to eq("rake")
+    expect(dependency.requirement.as_list).to eq([">= 0.8.7"])
   end
 
   it "parses oddly quoted gems" do
     content(%(gem %q<rake>))
-    dependency.name.should == "rake"
+    expect(dependency.name).to eq("rake")
   end
 end

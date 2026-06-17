@@ -8,11 +8,11 @@ describe Gemnasium::Parser do
     end
 
     it "returns a Gemfile" do
-      Gemnasium::Parser.gemfile("").should be_a(Gemnasium::Parser::Gemfile)
+      expect(Gemnasium::Parser.gemfile("")).to be_a(Gemnasium::Parser::Gemfile)
     end
 
     it "removes CR chars from content" do
-      Gemnasium::Parser.gemfile("\r").content.match("\r").should be_nil
+      expect(Gemnasium::Parser.gemfile("\r").content.match("\r")).to be_nil
     end
 
   end
@@ -24,11 +24,11 @@ describe Gemnasium::Parser do
     end
 
     it "returns a Gemspec" do
-      Gemnasium::Parser.gemspec("").should be_a(Gemnasium::Parser::Gemspec)
+      expect(Gemnasium::Parser.gemspec("")).to be_a(Gemnasium::Parser::Gemspec)
     end
 
     it "removes CR chars from content" do
-      Gemnasium::Parser.gemspec("\r").content.match("\r").should be_nil
+      expect(Gemnasium::Parser.gemspec("\r").content.match("\r")).to be_nil
     end
   end
 end

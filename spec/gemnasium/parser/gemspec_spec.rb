@@ -18,7 +18,7 @@ describe Gemnasium::Parser::Gemspec do
   end
 
   def dependency
-    dependencies.size.should == 1
+    expect(dependencies.size).to eq(1)
     dependencies.first
   end
 
@@ -32,8 +32,8 @@ describe Gemnasium::Parser::Gemspec do
         gem.add_dependency "rake", ">= 0.8.7"
       end
     EOF
-    dependency.name.should == "rake"
-    dependency.requirement.as_list.should == [">= 0.8.7"]
+    expect(dependency.name).to eq("rake")
+    expect(dependency.requirement.as_list).to eq([">= 0.8.7"])
   end
 
   it "parses single quotes" do
@@ -42,8 +42,8 @@ describe Gemnasium::Parser::Gemspec do
         gem.add_dependency 'rake', '>= 0.8.7'
       end
     EOF
-    dependency.name.should == "rake"
-    dependency.requirement.as_list.should == [">= 0.8.7"]
+    expect(dependency.name).to eq("rake")
+    expect(dependency.requirement.as_list).to eq([">= 0.8.7"])
   end
 
   it "ignores mixed quotes" do
@@ -52,7 +52,7 @@ describe Gemnasium::Parser::Gemspec do
         gem.add_dependency "rake', ">= 0.8.7"
       end
     EOF
-    dependencies.size.should == 0
+    expect(dependencies.size).to eq(0)
   end
 
   it "parses gems with a period in the name" do
@@ -61,8 +61,8 @@ describe Gemnasium::Parser::Gemspec do
         gem.add_dependency "pygment.rb", ">= 0.8.7"
       end
     EOF
-    dependency.name.should == "pygment.rb"
-    dependency.requirement.as_list.should == [">= 0.8.7"]
+    expect(dependency.name).to eq("pygment.rb")
+    expect(dependency.requirement.as_list).to eq([">= 0.8.7"])
   end
 
   it "parses non-requirement gems" do
@@ -71,8 +71,8 @@ describe Gemnasium::Parser::Gemspec do
         gem.add_dependency "rake"
       end
     EOF
-    dependency.name.should == "rake"
-    dependency.requirement.as_list.should == [">= 0"]
+    expect(dependency.name).to eq("rake")
+    expect(dependency.requirement.as_list).to eq([">= 0"])
   end
 
   it "parses multi-requirement gems" do
@@ -81,8 +81,8 @@ describe Gemnasium::Parser::Gemspec do
         gem.add_dependency "rake", ">= 0.8.7", "<= 0.9.2"
       end
     EOF
-    dependency.name.should == "rake"
-    dependency.requirement.as_list.should == [">= 0.8.7", "<= 0.9.2"]
+    expect(dependency.name).to eq("rake")
+    expect(dependency.requirement.as_list).to eq([">= 0.8.7", "<= 0.9.2"])
   end
 
   it "parses single-element array requirement gems" do
@@ -91,8 +91,8 @@ describe Gemnasium::Parser::Gemspec do
         gem.add_dependency "rake", [">= 0.8.7"]
       end
     EOF
-    dependency.name.should == "rake"
-    dependency.requirement.as_list.should == [">= 0.8.7"]
+    expect(dependency.name).to eq("rake")
+    expect(dependency.requirement.as_list).to eq([">= 0.8.7"])
   end
 
   it "parses multi-element array requirement gems" do
@@ -101,8 +101,8 @@ describe Gemnasium::Parser::Gemspec do
         gem.add_dependency "rake", [">= 0.8.7", "<= 0.9.2"]
       end
     EOF
-    dependency.name.should == "rake"
-    dependency.requirement.as_list.should == [">= 0.8.7", "<= 0.9.2"]
+    expect(dependency.name).to eq("rake")
+    expect(dependency.requirement.as_list).to eq([">= 0.8.7", "<= 0.9.2"])
   end
 
   it "parses runtime gems" do
@@ -112,8 +112,8 @@ describe Gemnasium::Parser::Gemspec do
         gem.add_runtime_dependency "rails"
       end
     EOF
-    dependencies[0].type.should == :runtime
-    dependencies[1].type.should == :runtime
+    expect(dependencies[0].type).to eq(:runtime)
+    expect(dependencies[1].type).to eq(:runtime)
   end
 
   it "parses dependency gems" do
@@ -122,7 +122,7 @@ describe Gemnasium::Parser::Gemspec do
         gem.add_development_dependency "rake"
       end
     EOF
-    dependency.type.should == :development
+    expect(dependency.type).to eq(:development)
   end
 
   it "records dependency line numbers" do
@@ -133,8 +133,8 @@ describe Gemnasium::Parser::Gemspec do
         gem.add_dependency "rails"
       end
     EOF
-    dependencies[0].instance_variable_get(:@line).should == 2
-    dependencies[1].instance_variable_get(:@line).should == 4
+    expect(dependencies[0].instance_variable_get(:@line)).to eq(2)
+    expect(dependencies[1].instance_variable_get(:@line)).to eq(4)
   end
 
   it "parses parentheses" do
@@ -143,8 +143,8 @@ describe Gemnasium::Parser::Gemspec do
         gem.add_dependency("rake", ">= 0.8.7")
       end
     EOF
-    dependency.name.should == "rake"
-    dependency.requirement.as_list.should == [">= 0.8.7"]
+    expect(dependency.name).to eq("rake")
+    expect(dependency.requirement.as_list).to eq([">= 0.8.7"])
   end
 
   it "parses gems followed by inline comments" do
@@ -153,7 +153,7 @@ describe Gemnasium::Parser::Gemspec do
         gem.add_dependency "rake", ">= 0.8.7" # Comment
       end
     EOF
-    dependency.name.should == "rake"
-    dependency.requirement.as_list.should == [">= 0.8.7"]
+    expect(dependency.name).to eq("rake")
+    expect(dependency.requirement.as_list).to eq([">= 0.8.7"])
   end
 end
